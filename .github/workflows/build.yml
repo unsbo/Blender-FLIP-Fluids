@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-windows:
-    name: Build FLIP Fluids (Windows MinGW)
+    name: Build FLIP Fluids (Windows UCRT64)
     runs-on: windows-latest
 
     steps:
@@ -14,27 +14,35 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Setup MSYS2 and MinGW Toolchain
+      - name: Setup MSYS2 and UCRT64 Toolchain
         uses: msys2/setup-msys2@v2
         with:
-          msystem: MINGW64
+          msystem: UCRT64
           update: true
           install: >-
-            mingw-w64-x86_64-toolchain
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-make
-            mingw-w64-x86_64-alembic
-            mingw-w64-x86_64-imath
-            mingw-w64-x86_64-python
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-alembic
+            mingw-w64-ucrt-x86_64-imath
+            mingw-w64-ucrt-x86_64-python
 
       - name: Run Build Script in MSYS2 Shell
         shell: msys2 {0}
         run: |
-          export CMAKE_PREFIX_PATH=/mingw64
+          export CMAKE_PREFIX_PATH=/ucrt64
           python build.py
+
+      - name: Verify Output Files
+        shell: msys2 {0}
+        run: |
+          ls -la build/
+          ls -la build/bl_flip_fluids/ || true
 
       - name: Upload Windows Pre-built Addon
         uses: actions/upload-artifact@v4
         with:
           name: FLIP_Fluids_Addon_Windows
-          path: build/**/*.zip
+          path: |
+            build/bl_flip_fluids/*.zip
+            build/bl_flip_fluids/
