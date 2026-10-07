@@ -1,0 +1,32 @@
+name: Build FLIP Fluids Addon
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc g++ make
+
+      - name: Run build script
+        run: |
+          python build.py
+
+      - name: Upload pre-built addon artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FLIP_Fluids_Addon_Prebuilt
+          path: build/bl_flip_fluids/*.zip
