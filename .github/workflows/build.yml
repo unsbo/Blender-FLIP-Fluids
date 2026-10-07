@@ -34,8 +34,14 @@ jobs:
           export CMAKE_PREFIX_PATH=/mingw64
           python build.py
 
+      - name: List Output Files
+        shell: msys2 {0}
+        run: |
+          ls -la build/
+          ls -la build/bl_flip_fluids/ || true
+
       - name: Upload Windows Pre-built Addon
         uses: actions/upload-artifact@v4
         with:
           name: FLIP_Fluids_Addon_Windows
-          path: build/bl_flip_fluids/
+          path: build/bl_flip_fluids/*
